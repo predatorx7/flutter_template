@@ -1,11 +1,12 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:magnific_core/magnific_core.dart';
+import 'package:navigator/navigator.dart';
 
-FlutterLoggingManager createDefaultLoggingManager() {
+FlutterLoggingManager createDefaultLoggingManager([bool debug = true]) {
   return FirebaseFlutterLoggingManager(
-    level: kDebugMode ? Level.ALL : Level.WARNING,
-    tree: kIsWeb || kDebugMode
+    level: debug ? Level.ALL : Level.WARNING,
+    tree: kIsWeb || debug
         ? PrintingColoredLogsTree()
         : FirebaseLogsTree(
             crashlytics: FirebaseCrashlytics.instance,
@@ -18,15 +19,23 @@ class FirebaseFlutterLoggingManager extends FlutterLoggingManager {
     String loggerName = 'LoggingManager',
     Level? level = Level.ALL,
     LoggingTree? tree,
-  }) : super(
+  })  : _tree = tree,
+        super(
           loggerName: loggerName,
           level: level,
           tree: tree,
         );
 
+  final LoggingTree? _tree;
+
   @override
   Future<void> onFlutterError(FlutterErrorDetails details) {
-    return FirebaseCrashlytics.instance.recordFlutterError(details);
+    if (hasTree && _tree is FirebaseLogsTree) {
+      return FirebaseCrashlytics.instance.recordFlutterError(details);
+    } else {
+      super.onFlutterError(details);
+      return Future.value(null);
+    }
   }
 }
 
@@ -61,5 +70,20 @@ class FirebaseLogsTree extends FormattedOutputLogsTree {
     } else {
       crashlytics.log(reason);
     }
+  }
+}
+
+class AppNavigationLogger extends NavigatorLogger {
+  @override
+  // ignore: overridden_fields
+  bool enableLogging = true;
+
+  @override
+  void log(
+    String message, {
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    logger.config(message, error, stackTrace);
   }
 }

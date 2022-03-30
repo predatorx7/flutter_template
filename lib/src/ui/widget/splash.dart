@@ -30,4 +30,4 @@ class _AppSplashFragment extends StatelessWidget {
   }
 }
 
-const appSplashScreen = _AppSplashFragment();
+const splashWithoutAnimationUI = _AppSplashFragment();

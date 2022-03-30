@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'theme.dart';
 
 class SettingsFor {
-  static const main = SettingsIdentifier('main');
+  static const production = SettingsIdentifier('production');
+  static const staging = SettingsIdentifier('staging');
+  static const development = SettingsIdentifier('development');
 }
 
 class AppDependency with DependencyObject {
@@ -16,11 +18,11 @@ class AppDependency with DependencyObject {
 }
 
 final mainAppSettings = AppSettings<Object, DependencyObject>(
-  flavorName: 'main',
+  flavorName: 'production',
   appName: 'Example',
   dependencies: (input) async {
     await Future.delayed(const Duration(milliseconds: 1000));
   },
   theme: AppTheme.regular,
-  identifier: SettingsFor.main,
+  identifier: SettingsFor.production,
 );

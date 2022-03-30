@@ -12,14 +12,14 @@ void main() {
   final bootstrap = BootstrapApp(
     onStart: () async {
       settingsManager.settings = mainAppSettings.copyWith(
-        flavorName: SettingsFor.production.id,
-        identifier: SettingsFor.production,
+        flavorName: SettingsFor.development.id,
+        identifier: SettingsFor.development,
       );
 
       await onStart();
     },
     loggingManager: () {
-      return createDefaultLoggingManager(false);
+      return createDefaultLoggingManager();
     },
     onStarted: onStarted,
   );

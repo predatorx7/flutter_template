@@ -1,4 +1,4 @@
-import 'package:example/src/ui/launch.dart';
+import 'package:example/src/ui/main/launch.dart';
 import 'package:example/src/ui/screen/home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navigator/navigator.dart';
