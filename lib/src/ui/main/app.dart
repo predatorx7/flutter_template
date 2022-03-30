@@ -1,4 +1,5 @@
 import 'package:app_boot/app_boot.dart';
+import 'package:example/build_options.dart';
 import 'package:example/src/commons/settings.dart';
 import 'package:example/src/navigation/config.dart';
 import 'package:example/l10n/l10n.dart';
@@ -26,15 +27,16 @@ class MainApp extends ConsumerWidget {
       onGenerateRoute: _nav.onGenerateRoute,
       onUnknownRoute: _nav.onUnknownRoute,
       navigatorObservers: [
-        FirebaseAnalyticsObserver(
-          analytics: FirebaseAnalytics.instance,
-          onError: (e) {
-            logger.warning(
-              'Failed to send navigation analytics to firebase',
-              e,
-            );
-          },
-        ),
+        if (packageSupportInfo.isFirebaseSupported)
+          FirebaseAnalyticsObserver(
+            analytics: FirebaseAnalytics.instance,
+            onError: (e) {
+              logger.warning(
+                'Failed to send navigation analytics to firebase',
+                e,
+              );
+            },
+          ),
       ],
       localizationsDelegates: const [
         ...AppLocalizations.localizationsDelegates,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:example/build_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,6 +31,8 @@ Future<void> _addFontLicense() async {
 }
 
 Future<void> _initFirebase() async {
+  if (!packageSupportInfo.isFirebaseSupported) return;
+
   await Firebase.initializeApp(
       // options: DefaultFirebaseOptions.currentPlatform,
       );
