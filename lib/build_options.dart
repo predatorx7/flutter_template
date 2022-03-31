@@ -14,7 +14,6 @@ class DevelopmentError {
   }
 }
 
-
 final packageSupportInfo = PackageSupportInfo();
 
 class BuildConfigurations {

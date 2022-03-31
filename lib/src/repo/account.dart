@@ -1,4 +1,4 @@
-import 'package:example/src/modules/authentication/account_manager.dart';
+import 'package:example/src/modules/authentication/token.dart';
 import 'package:example/src/storage/account/dao/token.dart';
 import 'package:example/src/storage/account/dao/user_account.dart';
 import 'package:example/src/storage/account/db.dart';

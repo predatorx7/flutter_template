@@ -61,6 +61,7 @@ class AppApi {
     return _path.isEmpty ? [] : _path.split('/');
   }
 
+  /// Returns a [Uri] where [path] segment is added to the base [url].
   Uri join(String path) {
     final _url = url;
 

@@ -4,43 +4,27 @@ import 'package:example/src/repo/account.dart';
 import 'package:example/src/storage/account/db.dart';
 import 'package:flutter/material.dart';
 import 'package:magnific_core/magnific_core.dart';
+import 'package:riverpod/riverpod.dart';
 
-class AuthenticationError {
-  final String message;
+import 'error.dart';
+import 'token.dart';
 
-  const AuthenticationError(this.message);
-
-  @override
-  String toString() {
-    return 'AuthenticationError($message)';
-  }
-}
-
-abstract class AuthenticationMiddleware {
-  @protected
-  AccountManager get am;
-
-  const AuthenticationMiddleware();
-
-  Future<String> getAuthorizationToken() async {
-    final token = am.authenticationToken;
-    if (token != null && am.isAuthenticated) return token.token;
-
-    throw const AuthenticationError('You are not authorized');
-  }
-}
-
-class UserAccount {
-  const UserAccount._(
-    this.id,
-    this.accountId,
-    this.accountType,
-    this.authenticationToken,
-  );
-
-  final int id;
+class Account {
   final String accountId;
   final String accountType;
+
+  const Account(this.accountId, this.accountType);
+}
+
+class UserAccount extends Account {
+  UserAccount._(
+    this.id,
+    String accountId,
+    String accountType,
+    this.authenticationToken,
+  ) : super(accountId, accountType);
+
+  final int id;
   final AuthenticationToken? authenticationToken;
 
   bool get isAuthenticated {
@@ -69,66 +53,7 @@ class UserAccount {
   }
 }
 
-class TokenTypes {
-  static const String jwt = 'JWT';
-}
-
-abstract class AuthenticationToken {
-  const AuthenticationToken._(this.tokenType, this.token);
-
-  factory AuthenticationToken(String tokenType, String token) {
-    switch (tokenType) {
-      case TokenTypes.jwt:
-        return JwtAuthenticationToken(token);
-      default:
-        throw const AuthenticationError('Invalid authentication token');
-    }
-  }
-
-  final String tokenType;
-  final String token;
-
-  DateTime get expiresAt;
-  bool get hasExpired;
-  bool get isAuthenticated => !hasExpired;
-  Duration get expiresIn;
-}
-
-class JwtAuthenticationToken extends AuthenticationToken {
-  JwtAuthenticationToken(String token) : super._('JWT', token);
-
-  @override
-  DateTime get expiresAt {
-    try {
-      return JwtDecoder.getExpirationDateTime(token);
-    } on FormatException {
-      logger.severe('Invalid authorization token: $token');
-      return DateTime.now().subtract(const Duration(seconds: 1));
-    }
-  }
-
-  @override
-  Duration get expiresIn {
-    try {
-      return JwtDecoder.getRemainingTime(token);
-    } on FormatException {
-      logger.severe('Invalid authorization token: $token');
-      return Duration.zero;
-    }
-  }
-
-  @override
-  bool get hasExpired {
-    try {
-      return JwtDecoder.isExpired(token);
-    } on FormatException {
-      logger.severe('Invalid authorization token: $token');
-      return true;
-    }
-  }
-}
-
-class _AccountValueModifier extends ValueNotifier<UserAccount?> {
+class _AccountValueModifier extends StateNotifier<UserAccount?> {
   @protected
   final AccountRepository _accountRepository;
 
@@ -176,7 +101,7 @@ class _AccountValueModifier extends ValueNotifier<UserAccount?> {
   }
 
   void _onAccountUpdate(List<SavedUserAccount> accounts) {
-    final oldValue = value;
+    final oldValue = state;
     if (accounts.isEmpty) {
       _removeAccountState();
     } else {
@@ -188,31 +113,31 @@ class _AccountValueModifier extends ValueNotifier<UserAccount?> {
         null,
       ));
     }
-    if (oldValue?.accountId != value?.accountId || oldValue?.id != value?.id) {
-      _onAccountChange(oldValue, value);
+    if (oldValue?.accountId != state?.accountId || oldValue?.id != state?.id) {
+      _onAccountChange(oldValue, state);
     }
   }
 
   void _addAccountState(UserAccount account) {
-    value = account;
+    state = account;
   }
 
   void _removeAccountState() {
-    value = null;
+    state = null;
   }
 
   void _addAuthenticationTokenState(AuthenticationToken token) {
-    final _state = value;
+    final _state = state;
     if (_state == null) return;
 
-    value = _state.copyWith(token: token);
+    state = _state.copyWith(token: token);
   }
 
   void _removeAuthenticationTokenState() {
-    final _state = value;
+    final _state = state;
     if (_state == null) return;
 
-    value = _state.removeToken();
+    state = _state.removeToken();
   }
 
   @override
@@ -223,7 +148,7 @@ class _AccountValueModifier extends ValueNotifier<UserAccount?> {
   }
 }
 
-mixin AccountManager implements Listenable {
+mixin AccountManager implements StateNotifier<UserAccount?> {
   AuthenticationToken? get authenticationToken;
 
   bool get isAuthenticated => authenticationToken?.isAuthenticated == true;
@@ -243,7 +168,7 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
   ) : super(_accountRepository);
 
   @override
-  AuthenticationToken? get authenticationToken => value?.authenticationToken;
+  AuthenticationToken? get authenticationToken => state?.authenticationToken;
 
   @override
   Future<bool> addAccount(String accountId, String accountType) async {
@@ -258,9 +183,10 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
 
   @override
   Future<bool> removeAccount() async {
-    final account = value;
+    final account = state;
     if (account == null) return true;
     try {
+      await _accountRepository.deleteAllTokensById(account.id);
       await _accountRepository.deleteById(account.accountId);
       return true;
     } catch (e, s) {
@@ -271,7 +197,7 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
 
   @override
   Future<bool> addAuthenticationToken(String token) async {
-    final account = value;
+    final account = state;
     if (account == null) return false;
 
     try {
@@ -285,7 +211,7 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
 
   @override
   Future<bool> removeAuthenticationToken() async {
-    final account = value;
+    final account = state;
     if (account == null) return true;
 
     try {
@@ -296,22 +222,4 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
     }
     return false;
   }
-}
-
-abstract class AuthenticationManager {
-  AuthenticationManager();
-
-  Future<String?> loginWithUsernamePassword(
-    String username,
-    String password,
-  );
-
-  Future<String?> loginWithMobileNumber(
-    String dialingCode,
-    String mobile,
-  );
-
-  Future<String?> verify(String otp);
-
-  Future<void> logout();
 }
