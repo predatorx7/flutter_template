@@ -41,6 +41,14 @@ dependencies:
 
   #version check
   version: ^2.0.0
+  devicelocale: ^0.5.0
+
+  # Storage
+  drift: ^1.1.1
+  sqlite3_flutter_libs: ^0.5.2
+
+  path: ^1.8.0
+  path_provider: ^2.0.8
 
 dev_dependencies:
   build_runner: ^2.1.5
@@ -51,6 +59,7 @@ dev_dependencies:
   # for l10n synthetic deps generation
   flutter_gen_runner: ^4.0.0
   retrofit_generator: ^4.0.1
+  drift_dev: ^1.1.1
 
 flutter:
   uses-material-design: true

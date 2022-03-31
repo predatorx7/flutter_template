@@ -1,4 +1,5 @@
 import 'package:app_boot/app_boot.dart';
+import 'package:example/src/services/uri.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,3 +27,9 @@ final mainAppSettings = AppSettings<Object, DependencyObject>(
   theme: AppTheme.regular,
   identifier: SettingsFor.production,
 );
+
+class AppData {
+  final AppApi mainApi;
+
+  const AppData(this.mainApi);
+}

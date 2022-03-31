@@ -1,7 +1,7 @@
 import 'package:app_boot/app_boot.dart';
 import 'package:example/build_options.dart';
 import 'package:example/src/commons/settings.dart';
-import 'package:example/src/navigation/config.dart';
+import 'package:example/src/modules/navigation/config.dart';
 import 'package:example/l10n/l10n.dart';
 import 'package:example/src/ui/widget/banner.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';

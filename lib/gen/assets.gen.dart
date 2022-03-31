@@ -59,17 +59,10 @@ class $GoogleFontsGen {
   String get ofl => 'google_fonts/OFL.txt';
 }
 
-class $AssetsAnimGen {
-  const $AssetsAnimGen();
-
-  /// File path: assets/anim/eye.gif
-  AssetGenImage get eye => const AssetGenImage('assets/anim/eye.gif');
-}
-
 class Assets {
   Assets._();
 
-  static const $AssetsAnimGen anim = $AssetsAnimGen();
+  static const String keep = 'assets/.keep';
   static const $GoogleFontsGen googleFonts = $GoogleFontsGen();
 }
 
