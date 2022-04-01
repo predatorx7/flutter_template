@@ -2,7 +2,6 @@ import 'package:example/build_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:magnific_core/magnific_core.dart';
-import 'package:navigator/navigator.dart';
 
 FlutterLoggingManager createDefaultLoggingManager([bool debug = true]) {
   return FirebaseFlutterLoggingManager(
@@ -71,20 +70,5 @@ class FirebaseLogsTree extends FormattedOutputLogsTree {
     } else {
       crashlytics.log(reason);
     }
-  }
-}
-
-class AppNavigationLogger extends NavigatorLogger {
-  @override
-  // ignore: overridden_fields
-  bool enableLogging = true;
-
-  @override
-  void log(
-    String message, {
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    logger.config(message, error, stackTrace);
   }
 }

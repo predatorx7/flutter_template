@@ -2,5 +2,9 @@ import 'package:example/src/storage/provider.dart';
 import 'package:riverpod/riverpod.dart';
 
 final userAccountDatabaseRef = Provider.autoDispose((ref) {
-  return DatabaseConstructor.userAccount();
+  final db = DatabaseConstructor.userAccount();
+
+  ref.onDispose(db.close);
+
+  return db;
 });

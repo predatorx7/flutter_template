@@ -23,5 +23,9 @@ final accountManagerRef =
     StateNotifierProvider.autoDispose<AccountManager, UserAccount?>((ref) {
   final repo = ref.watch(accountRepositoryRef);
 
-  return AccountManagerImpl(repo);
+  final manager = AccountManagerImpl(repo);
+
+  ref.onDispose(manager.dispose);
+
+  return manager;
 });

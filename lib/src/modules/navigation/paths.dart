@@ -1,23 +1,33 @@
 import 'package:example/src/ui/main/launch.dart';
 import 'package:example/src/ui/screen/home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:navigator/navigator.dart';
+import 'package:go_router/go_router.dart';
 
-final navigationPaths = Provider<List<NavigationPath>>(
+T? getTypeIf<T>(dynamic value) {
+  if (value is T) {
+    return value;
+  }
+  return null;
+}
+
+final navigationPaths = Provider<List<GoRoute>>(
   (ref) {
     return [
-      NavigationPath(
-        matcher: (a) => a?.name == AppLaunchScreen.routeName,
+      GoRoute(
+        name: AppLaunchScreen.routeName,
+        path: AppLaunchScreen.routeName,
         builder: (context, s) {
-          final _arg = s.arguments;
+          final redirectPath = getTypeIf<String>(s.queryParams['redirect']);
+
           return AppLaunchScreen(
-            routePath: _arg is String ? _arg : null,
+            routePath: redirectPath,
             reRoutePath: HomeScreen.routeName,
           );
         },
       ),
-      NavigationPath(
-        matcher: (s) => s?.name == HomeScreen.routeName,
+      GoRoute(
+        name: HomeScreen.routeName,
+        path: HomeScreen.routeName,
         builder: (context, s) {
           return const HomeScreen();
         },
