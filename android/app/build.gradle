@@ -77,6 +77,27 @@ android {
             }
         }
     }
+    flavorDimensions "default"
+        productFlavors { 
+            production {
+                dimension "default"
+                applicationIdSuffix ""
+                resValue "string", "app_name", "VROTT"
+                resValue "string", "facebook_app_id", "312364760616982"
+            }
+            staging {
+                dimension "default"
+                applicationIdSuffix ".stg"
+                resValue "string", "app_name", "VROTT STAGING"
+                resValue "string", "facebook_app_id", "312364760616982"
+            }        
+            development {
+                dimension "default"
+                applicationIdSuffix ".dev"
+                resValue "string", "app_name", "VROTT DEV"
+                resValue "string", "facebook_app_id", "312364760616982"
+            }
+        }
 
     buildTypes {
         release {
@@ -98,6 +119,10 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
+    implementation platform('com.google.firebase:firebase-bom:29.2.1')
+    implementation 'com.google.firebase:firebase-analytics'
 }
 
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
