@@ -19,10 +19,12 @@ class AccountRepository {
 
   Future<SavedUserAccount> addAccount(
     String accountId,
+    String accountName,
     String accountType,
   ) {
     return userAccountsDao.addAccount(SavedUserAccountsCompanion.insert(
       accountId: accountId,
+      accountName: accountName,
       accountType: accountType,
     ));
   }
@@ -51,11 +53,13 @@ class AccountRepository {
         .map(_mapToTokens);
   }
 
-  Iterable<AuthenticationToken> _mapToTokens(
+  List<AuthenticationToken> _mapToTokens(
     List<SavedAuthenticationToken> event,
   ) {
-    return event.map(_createToken).where((it) => it != null)
-        as Iterable<AuthenticationToken>;
+    return <AuthenticationToken>[
+      for (final it in event.map(_createToken))
+        if (it != null) it,
+    ];
   }
 
   AuthenticationToken? _createToken(

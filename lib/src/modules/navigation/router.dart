@@ -1,16 +1,19 @@
 import 'package:example/build_options.dart';
+import 'package:example/src/di/account.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:magnific_core/magnific_core.dart';
 
-import 'paths.dart';
+import 'routes.dart';
 
 final routerProviderRef = Provider((ref) {
-  final paths = ref.read(navigationPaths);
+  final routes = ref.read(navigationPaths);
+  final accountManager = ref.read(accountManagerRef.notifier);
 
   return GoRouter(
-    routes: paths,
+    routes: routes,
+    refreshListenable: GoRouterRefreshStream(accountManager.stream),
     observers: [
       if (packageSupportInfo.isFirebaseSupported)
         FirebaseAnalyticsObserver(
@@ -23,5 +26,6 @@ final routerProviderRef = Provider((ref) {
           },
         ),
     ],
+    redirect: ref.read(routerRootRedirection),
   );
 });

@@ -13,6 +13,8 @@ abstract class AuthenticationMiddleware {
     final token = am.authenticationToken;
     if (token != null && am.isAuthenticated) return token.token;
 
+    // This is a good place to renew token if expired by using a Completer-lock mechanism.
+
     throw const AuthenticationError('You are not authorized');
   }
 }

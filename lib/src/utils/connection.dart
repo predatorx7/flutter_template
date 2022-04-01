@@ -20,8 +20,8 @@ class DatabaseConnectionProvider {
   ///
   /// ! Only for main isolates
   Future<String> get databaseFilePath async {
-    final applicationDocuments = await pp.getApplicationDocumentsDirectory();
-    final databasePath = p.join(applicationDocuments.path, 'database');
+    final applicationSupport = await pp.getApplicationSupportDirectory();
+    final databasePath = p.join(applicationSupport.path, 'database');
     final dbFolder = Directory(databasePath);
     if (!await dbFolder.exists()) {
       await dbFolder.create(recursive: true);

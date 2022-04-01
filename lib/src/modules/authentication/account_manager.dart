@@ -6,23 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:magnific_core/magnific_core.dart';
 import 'package:riverpod/riverpod.dart';
 
-import 'error.dart';
 import 'token.dart';
 
 class Account {
   final String accountId;
+  final String accountName;
   final String accountType;
 
-  const Account(this.accountId, this.accountType);
+  const Account(
+    this.accountId,
+    this.accountName,
+    this.accountType,
+  );
 }
 
 class UserAccount extends Account {
   UserAccount._(
     this.id,
     String accountId,
+    String accountName,
     String accountType,
     this.authenticationToken,
-  ) : super(accountId, accountType);
+  ) : super(accountId, accountName, accountType);
 
   final int id;
   final AuthenticationToken? authenticationToken;
@@ -34,11 +39,14 @@ class UserAccount extends Account {
 
   UserAccount? copyWith({
     AuthenticationToken? token,
+    String? accountName,
+    String? accountType,
   }) {
     return UserAccount._(
       id,
       accountId,
-      accountType,
+      accountName ?? this.accountName,
+      accountType ?? this.accountType,
       token ?? authenticationToken,
     );
   }
@@ -47,6 +55,7 @@ class UserAccount extends Account {
     return UserAccount._(
       id,
       accountId,
+      accountName,
       accountType,
       null,
     );
@@ -109,6 +118,7 @@ class _AccountValueModifier extends StateNotifier<UserAccount?> {
       _addAccountState(UserAccount._(
         primaryAccount.id,
         primaryAccount.accountId,
+        primaryAccount.accountName,
         primaryAccount.accountType,
         null,
       ));
@@ -153,11 +163,18 @@ mixin AccountManager implements StateNotifier<UserAccount?> {
 
   bool get isAuthenticated => authenticationToken?.isAuthenticated == true;
 
-  Future<bool> addAccount(String accountId, String accountType);
+  /// Saves account and returns the local Id of the saved account (savedAccountId).
+  ///
+  /// Note: This AccountManager's state won't immediately reflect account after this future completes.
+  Future<int?> addAccount(Account account);
 
   Future<bool> removeAccount();
 
-  Future<bool> addAuthenticationToken(String token);
+  /// Adds authentication token to an accound with account local ID [savedAccountId] and
+  /// returns local Id of the saved token (savedTokenId).
+  ///
+  /// Note: This AccountManager's state won't immediately reflect token after this future completes.
+  Future<int?> addAuthenticationToken(int savedAccountId, String token);
 
   Future<bool> removeAuthenticationToken();
 }
@@ -171,14 +188,18 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
   AuthenticationToken? get authenticationToken => state?.authenticationToken;
 
   @override
-  Future<bool> addAccount(String accountId, String accountType) async {
+  Future<int?> addAccount(Account account) async {
     try {
-      await _accountRepository.addAccount(accountId, accountType);
-      return true;
+      final savedAccount = await _accountRepository.addAccount(
+        account.accountId,
+        account.accountName,
+        account.accountType,
+      );
+      return savedAccount.id;
     } catch (e, s) {
       _onError(e, s);
     }
-    return false;
+    return null;
   }
 
   @override
@@ -196,17 +217,22 @@ class AccountManagerImpl extends _AccountValueModifier with AccountManager {
   }
 
   @override
-  Future<bool> addAuthenticationToken(String token) async {
-    final account = state;
-    if (account == null) return false;
-
+  Future<int?> addAuthenticationToken(
+    int savedAccountId,
+    String token,
+  ) async {
     try {
-      await _accountRepository.addToken(account.id, token, TokenTypes.jwt);
-      return true;
+      final savedToken = await _accountRepository.addToken(
+        savedAccountId,
+        token,
+        TokenTypes.jwt,
+      );
+      return savedToken.id;
     } catch (e, s) {
+      logger.info('Failed to save token', e, s);
       _onError(e, s);
     }
-    return false;
+    return null;
   }
 
   @override

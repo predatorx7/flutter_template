@@ -1,11 +1,11 @@
 name: example
-description: Example of zero-dce implementation on cross platform app
+description: Example of a complete flutter template with authentication mechanism
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # major.minor.patch+yymm__dd
-version: 0.0.1+21120000
+version: 0.0.1+22040001
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
@@ -17,22 +17,29 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.17.0
+
   cupertino_icons: ^1.0.2
-  magnific_ui: ^0.2.1
-  magnific_core: ^0.1.2
-  app_boot: ^0.2.1
-  riverpod: ^1.0.0
-  flutter_riverpod: ^1.0.0
-  dio: ^4.0.4
-  freezed_annotation: ^1.0.0
-  shared_preferences: ^2.0.9
-  retrofit: ^3.0.0
   google_fonts: ^2.1.0
   flutter_svg: ^1.0.0
+  cached_network_image: ^3.2.0
+
+  # my packages
+  magnific_ui: ^0.3.0
+  magnific_core: ^0.2.0
+  app_boot: ^0.2.2
+  single_async_widget: ^1.0.0
+
+  riverpod: ^1.0.0
+  flutter_riverpod: ^1.0.0
+
+  dio: ^4.0.4
+  freezed_annotation: ^1.0.0
+  json_annotation: ^4.4.0
+
+  shared_preferences: ^2.0.9
+  retrofit: ^3.0.0
 
   go_router: ^3.0.6
-
-  cached_network_image: ^3.2.0
 
   # Firebase suite
   firebase_core: ^1.6.0
@@ -47,6 +54,8 @@ dependencies:
   # Storage
   drift: ^1.1.1
   sqlite3_flutter_libs: ^0.5.2
+  sqlite3: ^1.5.1
+  system_info2: ^2.0.3
 
   path: ^1.8.0
   path_provider: ^2.0.8
@@ -57,6 +66,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^1.0.0
   freezed: ^1.0.0
+  json_serializable: ^6.1.5
   # for l10n synthetic deps generation
   flutter_gen_runner: ^4.0.0
   retrofit_generator: ^4.0.1

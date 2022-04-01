@@ -16,7 +16,6 @@ class AppLocale {
   }
 
   static Locale deviceLocale() {
-    Devicelocale.currentLocale;
     final _platformDispatcher = WidgetsBinding.instance?.platformDispatcher;
     if (_platformDispatcher != null) {
       return _platformDispatcher.locale;

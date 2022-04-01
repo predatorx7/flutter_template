@@ -1,7 +1,13 @@
 import 'package:app_boot/app_settings_manager.dart';
 import 'package:example/src/commons/settings.dart';
-import 'package:example/src/utils/package_support/package_support.dart';
-import 'package:flutter/foundation.dart';
+
+import 'package:flutter/foundation.dart'
+    show
+        TargetPlatform,
+        defaultTargetPlatform,
+        kDebugMode,
+        kIsWeb,
+        kReleaseMode;
 
 class DevelopmentError {
   const DevelopmentError(this.moduleName);
@@ -14,6 +20,16 @@ class DevelopmentError {
   }
 }
 
+class PackageSupportInfo {
+  final isFirebaseSupported = kIsWeb ||
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS;
+
+  final isFirebaseDartConfigAvailable =
+      kIsWeb || defaultTargetPlatform != TargetPlatform.android;
+}
+
 final packageSupportInfo = PackageSupportInfo();
 
 class BuildConfigurations {
@@ -21,7 +37,8 @@ class BuildConfigurations {
   // ignore: unused_field
   final _assertsEnabled = true;
 
-  bool get developmentFeature => kDebugMode;
+  bool get isDiagnosticsEnabled =>
+      kDebugMode || currentSettings.identifier != SettingsFor.production;
 
   // Example of a feature that is not in development but can be enabled/disabled later.
   bool get someotherNonDevelopmentFeature => true;
@@ -33,7 +50,7 @@ class BuildConfigurations {
   void _asserts() {
     // An example of an assert statement of a feature that is still in
     // development mode.
-    _assert(developmentFeature, 'development-feature');
+    _assert(isDiagnosticsEnabled, 'development-feature');
   }
 
   void assertDevelopmentFlags() {

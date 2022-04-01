@@ -10,8 +10,11 @@ class AuthenticationAttempt {
   final bool needsVerification;
   final String? reason;
 
-  const AuthenticationAttempt.failed(this.validationMessage, [this.reason])
-      : needsVerification = true;
+  const AuthenticationAttempt.failed(
+    this.validationMessage,
+    this.needsVerification, [
+    this.reason,
+  ]);
 
   const AuthenticationAttempt.verifiedSuccess()
       : validationMessage = null,
@@ -24,6 +27,13 @@ class AuthenticationAttempt {
         needsVerification = true;
 }
 
+class _SavedLoginAttempt<T> {
+  final int savedAccountId;
+  final AuthenticationResponse<T> response;
+
+  const _SavedLoginAttempt(this.savedAccountId, this.response);
+}
+
 class AuthenticationManager<T> {
   AuthenticationManager(
     this.delegate,
@@ -33,20 +43,23 @@ class AuthenticationManager<T> {
   final AuthenticationDelegate<T> delegate;
   final AccountManager accountManager;
 
-  AuthenticationResponse<T>? _savedLoginAttempt;
+  _SavedLoginAttempt<T>? _savedLoginAttempt;
 
   bool get hasLoginAttempt => _savedLoginAttempt != null;
 
-  void _addSavedLoginAttempt(AuthenticationResponse<T> response) {
+  void _addSavedLoginAttempt(
+    int savedAccountId,
+    AuthenticationResponse<T> response,
+  ) {
     if (_savedLoginAttempt != null) {
       throw const AuthenticationError(
         'A previous login attempt is in progress and needs verification',
       );
     }
-    _savedLoginAttempt = response;
+    _savedLoginAttempt = _SavedLoginAttempt(savedAccountId, response);
   }
 
-  AuthenticationResponse<T> _getSavedLoginAttempt() {
+  _SavedLoginAttempt<T> _getSavedLoginAttempt() {
     final response = _savedLoginAttempt;
     if (response == null) {
       throw const AuthenticationError(
@@ -57,27 +70,31 @@ class AuthenticationManager<T> {
   }
 
   Future<AuthenticationAttempt> _verifyFromToken(
+    int savedAccountId,
     AuthenticationResponse<T> response,
   ) async {
     if (!response.isSuccess) {
       return AuthenticationAttempt.failed(
         response.message,
+        response.needsVerification,
       );
     }
 
     final token = response.token;
 
     if (token != null && token.isAuthenticated) {
-      final hasUpdated = await accountManager.addAuthenticationToken(
+      final savedTokenId = await accountManager.addAuthenticationToken(
+        savedAccountId,
         token.token,
       );
 
-      if (hasUpdated) {
+      if (savedTokenId != null) {
         return const AuthenticationAttempt.verifiedSuccess();
       } else {
         return AuthenticationAttempt.failed(
           response.message,
-          'Failed to update token',
+          response.needsVerification,
+          'Failed to save token ${token.token}',
         );
       }
     } else {
@@ -89,6 +106,7 @@ class AuthenticationManager<T> {
       }
       return AuthenticationAttempt.failed(
         response.message,
+        response.needsVerification,
         _reason,
       );
     }
@@ -100,33 +118,35 @@ class AuthenticationManager<T> {
     if (!response.isSuccess) {
       return AuthenticationAttempt.failed(
         response.message,
+        false,
       );
     }
 
     final account = response.account;
     if (account != null) {
-      final hasAccountUpdated = await accountManager.addAccount(
-        account.accountId,
-        account.accountType,
+      final savedAccountId = await accountManager.addAccount(
+        account,
       );
 
-      if (hasAccountUpdated) {
+      if (savedAccountId != null) {
         if (!response.needsVerification) {
-          return _verifyFromToken(response);
+          return _verifyFromToken(savedAccountId, response);
         } else {
-          _addSavedLoginAttempt(response);
+          _addSavedLoginAttempt(savedAccountId, response);
 
           return const AuthenticationAttempt.success();
         }
       } else {
         return AuthenticationAttempt.failed(
           response.message,
-          'Failed to update account',
+          false,
+          'Failed to save account',
         );
       }
     } else {
       return AuthenticationAttempt.failed(
         response.message,
+        false,
         'Account is null',
       );
     }
@@ -158,13 +178,13 @@ class AuthenticationManager<T> {
 
   /// [verification] can be a token, otp, pin, password for verifying a login attempt.
   Future<AuthenticationAttempt> verify(String verification) async {
-    final previousResponse = _getSavedLoginAttempt();
+    final previousLoginAttempt = _getSavedLoginAttempt();
     final response = await delegate.verify(
-      previousResponse,
+      previousLoginAttempt.response,
       verification,
     );
 
-    return _verifyFromToken(response);
+    return _verifyFromToken(previousLoginAttempt.savedAccountId, response);
   }
 
   void clearLoginAttempts() {

@@ -25,8 +25,8 @@ class RepositoryError {
   }
 }
 
-abstract class HttpRepository {
-  const HttpRepository();
+abstract class HttpClientProvider {
+  const HttpClientProvider();
 
   @protected
   AppApi get api;
@@ -48,14 +48,14 @@ abstract class HttpRepository {
     final _dio = Dio(options);
 
     if (decodeJsonInBackground) {
-      setBackgroundJsonDecodingForDio(_dio.transformer);
+      setBackgroundDataProcessingForDio(_dio.transformer);
     }
 
     return _dio;
   }
 }
 
-abstract class SingleServiceRepository<SERVICE> extends HttpRepository {
+abstract class SingleServiceRepository<SERVICE> extends HttpClientProvider {
   SERVICE? _cachedService;
 
   @protected
@@ -77,14 +77,14 @@ abstract class SingleServiceRepository<SERVICE> extends HttpRepository {
 
     return _cachedService!;
   }
-}
-
-abstract class MultiServicesRepository extends HttpRepository {
-  final Map<Type, Object> _cachedServices = {};
 
   void dispose() {
-    _cachedServices.clear();
+    _cachedService = null;
   }
+}
+
+abstract class MultiServicesRepository extends HttpClientProvider {
+  final Map<Type, Object> _cachedServices = {};
 
   @protected
   List<Type> get supportedServices;
@@ -111,5 +111,9 @@ abstract class MultiServicesRepository extends HttpRepository {
     }
 
     return _cachedServices[T] as T;
+  }
+
+  void dispose() {
+    _cachedServices.clear();
   }
 }

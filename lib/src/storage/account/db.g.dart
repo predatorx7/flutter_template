@@ -11,12 +11,14 @@ class SavedUserAccount extends DataClass
     implements Insertable<SavedUserAccount> {
   final int id;
   final String accountId;
+  final String accountName;
   final String accountType;
   final DateTime createdAt;
   final DateTime updatedAt;
   SavedUserAccount(
       {required this.id,
       required this.accountId,
+      required this.accountName,
       required this.accountType,
       required this.createdAt,
       required this.updatedAt});
@@ -28,6 +30,8 @@ class SavedUserAccount extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       accountId: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}account_id'])!,
+      accountName: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}account_name'])!,
       accountType: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}account_type'])!,
       createdAt: const DateTimeType()
@@ -41,6 +45,7 @@ class SavedUserAccount extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['account_id'] = Variable<String>(accountId);
+    map['account_name'] = Variable<String>(accountName);
     map['account_type'] = Variable<String>(accountType);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -51,6 +56,7 @@ class SavedUserAccount extends DataClass
     return SavedUserAccountsCompanion(
       id: Value(id),
       accountId: Value(accountId),
+      accountName: Value(accountName),
       accountType: Value(accountType),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -63,6 +69,7 @@ class SavedUserAccount extends DataClass
     return SavedUserAccount(
       id: serializer.fromJson<int>(json['id']),
       accountId: serializer.fromJson<String>(json['accountId']),
+      accountName: serializer.fromJson<String>(json['accountName']),
       accountType: serializer.fromJson<String>(json['accountType']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -74,6 +81,7 @@ class SavedUserAccount extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'accountId': serializer.toJson<String>(accountId),
+      'accountName': serializer.toJson<String>(accountName),
       'accountType': serializer.toJson<String>(accountType),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -83,12 +91,14 @@ class SavedUserAccount extends DataClass
   SavedUserAccount copyWith(
           {int? id,
           String? accountId,
+          String? accountName,
           String? accountType,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
       SavedUserAccount(
         id: id ?? this.id,
         accountId: accountId ?? this.accountId,
+        accountName: accountName ?? this.accountName,
         accountType: accountType ?? this.accountType,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
@@ -98,6 +108,7 @@ class SavedUserAccount extends DataClass
     return (StringBuffer('SavedUserAccount(')
           ..write('id: $id, ')
           ..write('accountId: $accountId, ')
+          ..write('accountName: $accountName, ')
           ..write('accountType: $accountType, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -106,14 +117,15 @@ class SavedUserAccount extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, accountId, accountType, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      id, accountId, accountName, accountType, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SavedUserAccount &&
           other.id == this.id &&
           other.accountId == this.accountId &&
+          other.accountName == this.accountName &&
           other.accountType == this.accountType &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -122,12 +134,14 @@ class SavedUserAccount extends DataClass
 class SavedUserAccountsCompanion extends UpdateCompanion<SavedUserAccount> {
   final Value<int> id;
   final Value<String> accountId;
+  final Value<String> accountName;
   final Value<String> accountType;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const SavedUserAccountsCompanion({
     this.id = const Value.absent(),
     this.accountId = const Value.absent(),
+    this.accountName = const Value.absent(),
     this.accountType = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -135,14 +149,17 @@ class SavedUserAccountsCompanion extends UpdateCompanion<SavedUserAccount> {
   SavedUserAccountsCompanion.insert({
     this.id = const Value.absent(),
     required String accountId,
+    required String accountName,
     required String accountType,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   })  : accountId = Value(accountId),
+        accountName = Value(accountName),
         accountType = Value(accountType);
   static Insertable<SavedUserAccount> custom({
     Expression<int>? id,
     Expression<String>? accountId,
+    Expression<String>? accountName,
     Expression<String>? accountType,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -150,6 +167,7 @@ class SavedUserAccountsCompanion extends UpdateCompanion<SavedUserAccount> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (accountId != null) 'account_id': accountId,
+      if (accountName != null) 'account_name': accountName,
       if (accountType != null) 'account_type': accountType,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -159,12 +177,14 @@ class SavedUserAccountsCompanion extends UpdateCompanion<SavedUserAccount> {
   SavedUserAccountsCompanion copyWith(
       {Value<int>? id,
       Value<String>? accountId,
+      Value<String>? accountName,
       Value<String>? accountType,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt}) {
     return SavedUserAccountsCompanion(
       id: id ?? this.id,
       accountId: accountId ?? this.accountId,
+      accountName: accountName ?? this.accountName,
       accountType: accountType ?? this.accountType,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -179,6 +199,9 @@ class SavedUserAccountsCompanion extends UpdateCompanion<SavedUserAccount> {
     }
     if (accountId.present) {
       map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (accountName.present) {
+      map['account_name'] = Variable<String>(accountName.value);
     }
     if (accountType.present) {
       map['account_type'] = Variable<String>(accountType.value);
@@ -197,6 +220,7 @@ class SavedUserAccountsCompanion extends UpdateCompanion<SavedUserAccount> {
     return (StringBuffer('SavedUserAccountsCompanion(')
           ..write('id: $id, ')
           ..write('accountId: $accountId, ')
+          ..write('accountName: $accountName, ')
           ..write('accountType: $accountType, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -226,6 +250,12 @@ class $SavedUserAccountsTable extends SavedUserAccounts
           GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 12),
       type: const StringType(),
       requiredDuringInsert: true);
+  final VerificationMeta _accountNameMeta =
+      const VerificationMeta('accountName');
+  @override
+  late final GeneratedColumn<String?> accountName = GeneratedColumn<String?>(
+      'account_name', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _accountTypeMeta =
       const VerificationMeta('accountType');
   @override
@@ -248,7 +278,7 @@ class $SavedUserAccountsTable extends SavedUserAccounts
       defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, accountId, accountType, createdAt, updatedAt];
+      [id, accountId, accountName, accountType, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'saved_user_accounts';
   @override
@@ -266,6 +296,14 @@ class $SavedUserAccountsTable extends SavedUserAccounts
           accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta));
     } else if (isInserting) {
       context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('account_name')) {
+      context.handle(
+          _accountNameMeta,
+          accountName.isAcceptableOrUnknown(
+              data['account_name']!, _accountNameMeta));
+    } else if (isInserting) {
+      context.missing(_accountNameMeta);
     }
     if (data.containsKey('account_type')) {
       context.handle(

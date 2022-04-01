@@ -18,13 +18,13 @@ class AppDependency with DependencyObject {
   const AppDependency(this.context, this.ref);
 }
 
-final mainAppSettings = AppSettings<Object, DependencyObject>(
-  flavorName: 'production',
+final mainAppSettings = AppSettings<AppData, DependencyObject>(
   appName: 'Example',
   dependencies: (input) async {
     await Future.delayed(const Duration(milliseconds: 1000));
   },
   theme: AppTheme.regular,
+  flavorName: SettingsFor.production.id,
   identifier: SettingsFor.production,
 );
 
@@ -33,3 +33,5 @@ class AppData {
 
   const AppData(this.mainApi);
 }
+
+AppApi get currentAppApi => (currentSettings.payload as AppData).mainApi;

@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:example/build_options.dart';
+import 'package:example/src/utils/sql/disposable.dart';
+import 'package:example/src/utils/sql/initialize.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
@@ -14,11 +16,22 @@ Future<void> onStart() async {
   await _initFirebase();
 }
 
+Disposable? _platformDatabaseDisposable;
+
 List<Future> onStarted() {
+  _platformDatabaseDisposable = initializePlatformDatabase();
+
   cachedNetworkImageProviver = (it) => CachedNetworkImageProvider(it);
   return <Future>[
     _addFontLicense(),
   ];
+}
+
+Future<void> onEnd() {
+  if (_platformDatabaseDisposable != null) {
+    _platformDatabaseDisposable!.dispose();
+  }
+  return Future.value(null);
 }
 
 Future<void> _addFontLicense() async {
@@ -33,7 +46,7 @@ Future<void> _initFirebase() async {
 
   await Firebase.initializeApp(
     // TODO: Use this till we get a way to add configs of multiple flavors for android & iOS
-    options: packageSupportInfo.useConfigForFirebase
+    options: packageSupportInfo.isFirebaseDartConfigAvailable
         ? DefaultFirebaseOptions.currentPlatform
         : null,
   );

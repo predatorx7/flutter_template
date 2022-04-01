@@ -7,6 +7,7 @@ import 'src/commons/bootstrap.dart';
 import 'src/commons/settings.dart';
 import 'src/ui/main/app.dart';
 import 'src/utils/logging.dart';
+import 'src/services/uri.dart';
 
 void main() {
   final bootstrap = BootstrapApp(
@@ -14,6 +15,11 @@ void main() {
       settingsManager.settings = mainAppSettings.copyWith(
         flavorName: SettingsFor.production.id,
         identifier: SettingsFor.production,
+        payload: AppData(
+          AppApi(
+            Uri.https('example.com', ''),
+          ),
+        ),
       );
 
       await onStart();
@@ -22,6 +28,7 @@ void main() {
       return createDefaultLoggingManager(false);
     },
     onStarted: onStarted,
+    onEnd: onEnd,
   );
 
   bootstrap.start(

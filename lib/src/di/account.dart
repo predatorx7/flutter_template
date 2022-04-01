@@ -7,7 +7,7 @@ import 'package:riverpod/riverpod.dart';
 
 import 'database.dart';
 
-final accountRepositoryRef = Provider.autoDispose((ref) {
+final accountRepositoryRef = Provider((ref) {
   final userAccountDb = ref.watch(userAccountDatabaseRef);
 
   final authTokenDao = AuthenticationTokensDao(userAccountDb);
@@ -20,7 +20,7 @@ final accountRepositoryRef = Provider.autoDispose((ref) {
 });
 
 final accountManagerRef =
-    StateNotifierProvider.autoDispose<AccountManager, UserAccount?>((ref) {
+    StateNotifierProvider<AccountManager, UserAccount?>((ref) {
   final repo = ref.watch(accountRepositoryRef);
 
   final manager = AccountManagerImpl(repo);
