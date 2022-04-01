@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:example/build_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,8 +32,12 @@ Future<void> _initFirebase() async {
   if (!packageSupportInfo.isFirebaseSupported) return;
 
   await Firebase.initializeApp(
-      // options: DefaultFirebaseOptions.currentPlatform,
-      );
+    // TODO: Use this till we get a way to add configs of multiple flavors for android & iOS
+    options: packageSupportInfo.useConfigForFirebase
+        ? DefaultFirebaseOptions.currentPlatform
+        : null,
+  );
+
   // Force disable Crashlytics collection while doing every day development.
   // Temporarily toggle this to true if you want to test crash reporting in your app.
   if (!kIsWeb && kDebugMode) {
