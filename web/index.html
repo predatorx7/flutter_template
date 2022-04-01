@@ -14,6 +14,8 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
+
+ 
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -33,6 +35,8 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
@@ -49,6 +53,28 @@
       scriptTag.type = 'application/javascript';
       document.body.append(scriptTag);
     }
+
+     // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCQqZ9Mjptf9_2C-UYCQ65wMKiUGGksM9k",
+  authDomain: "flutter-template-93827.firebaseapp.com",
+  projectId: "flutter-template-93827",
+  storageBucket: "flutter-template-93827.appspot.com",
+  messagingSenderId: "721345063370",
+  appId: "1:721345063370:web:7bfd29e04e8716c9ee8733",
+  measurementId: "G-5B6L714QD7"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
     if ('serviceWorker' in navigator) {
       // Service workers are supported. Use them.

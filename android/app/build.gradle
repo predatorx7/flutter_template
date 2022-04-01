@@ -82,20 +82,17 @@ android {
             production {
                 dimension "default"
                 applicationIdSuffix ""
-                resValue "string", "app_name", "VROTT"
-                resValue "string", "facebook_app_id", "312364760616982"
+                resValue "string", "app_name", "Template"
             }
             staging {
                 dimension "default"
                 applicationIdSuffix ".stg"
-                resValue "string", "app_name", "VROTT STAGING"
-                resValue "string", "facebook_app_id", "312364760616982"
+                resValue "string", "app_name", "Template STAGING"
             }        
             development {
                 dimension "default"
                 applicationIdSuffix ".dev"
-                resValue "string", "app_name", "VROTT DEV"
-                resValue "string", "facebook_app_id", "312364760616982"
+                resValue "string", "app_name", "Template DEV"
             }
         }
 
