@@ -36,9 +36,10 @@ class _AppLaunchScreenState extends ConsumerState<AppLaunchScreen> {
   }
 
   void _stopAfterDelay() async {
-    await Future.delayed(const Duration(milliseconds: 1500));
-    if (!mounted) return;
-    _animationNotifier.onCompleted();
+    await Future.delayed(durationOfSplashWithoutAnimations);
+    if (mounted) {
+      _animationNotifier.onCompleted();
+    }
   }
 
   @override
@@ -52,6 +53,7 @@ class _AppLaunchScreenState extends ConsumerState<AppLaunchScreen> {
     return LaunchScreen(
       routePath: widget.routePath,
       reRoutePath: widget.reRoutePath,
+      animatingNotifier: _animationNotifier,
       onNavigate: (context, routeName) {
         GoRouter.of(context).goNamed(
           routeName,

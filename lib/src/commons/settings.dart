@@ -3,6 +3,7 @@ import 'package:example/src/services/uri.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'dependencies.dart';
 import 'theme.dart';
 
 class SettingsFor {
@@ -21,7 +22,11 @@ class AppDependency with DependencyObject {
 final mainAppSettings = AppSettings<AppData, DependencyObject>(
   appName: 'Example',
   dependencies: (input) async {
-    await Future.delayed(const Duration(milliseconds: 1000));
+    if (input is AppDependency) {
+      // Because our app needs riverpod's ref and flutter's context to
+      // find its dependencies
+      return resolveAppDependencies(input.context, input.ref);
+    }
   },
   theme: AppTheme.regular,
   flavorName: SettingsFor.production.id,

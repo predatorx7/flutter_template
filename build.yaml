@@ -4,3 +4,14 @@ targets:
       drift_dev:
         options:
           generate_connect_constructor: true
+      build_web_compilers:entrypoint:
+        generate_for:
+          - web/**.dart
+        options:
+          compiler: dart2js
+        dev_options:
+          dart2js_args:
+            - --no-minify
+        release_options:
+          dart2js_args:
+            - -O4

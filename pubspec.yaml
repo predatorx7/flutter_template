@@ -72,6 +72,9 @@ dev_dependencies:
   retrofit_generator: ^4.0.1
   drift_dev: ^1.1.1
 
+  # For compiling .dart files to .js in web/
+  build_web_compilers: ^3.2.1
+
 flutter:
   uses-material-design: true
   generate: true

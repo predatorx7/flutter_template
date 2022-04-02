@@ -7,20 +7,20 @@ class _AppSplashFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final overlay = AppSystemUIOverlayStyle.fromColor(
-      Colors.black,
-      statusBarBrightness: Brightness.light,
-      navigationBarBrightness: Brightness.light,
+      Colors.white,
+      statusBarBrightness: Brightness.dark,
+      navigationBarBrightness: Brightness.dark,
     );
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
         // ignore: deprecated_member_use
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         systemOverlayStyle: overlay,
       ),
       body: const Center(
@@ -31,3 +31,5 @@ class _AppSplashFragment extends StatelessWidget {
 }
 
 const splashWithoutAnimationUI = _AppSplashFragment();
+
+const durationOfSplashWithoutAnimations = Duration(milliseconds: 1500);

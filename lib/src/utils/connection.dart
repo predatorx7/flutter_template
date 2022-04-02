@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
 import 'package:drift/native.dart';
+import 'package:magnific_core/magnific_core.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart' as pp;
 
@@ -26,7 +27,9 @@ class DatabaseConnectionProvider {
     if (!await dbFolder.exists()) {
       await dbFolder.create(recursive: true);
     }
-    return p.join(dbFolder.path, databaseFileName);
+    final savePath = p.join(dbFolder.path, databaseFileName);
+    logger.config('Databse save path: $savePath');
+    return savePath;
   }
 
   LazyDatabase get fromForeground {

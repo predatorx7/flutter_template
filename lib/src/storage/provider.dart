@@ -6,5 +6,7 @@ import 'provider/unsupported.dart'
 class DatabaseConstructor {
   DatabaseConstructor._();
 
-  static UserAccountDatabase userAccount() => $userAccount();
+  static const _userAccountDbName = 'useraccount_db.sqlite';
+
+  static UserAccountDatabase userAccount() => $userAccount(_userAccountDbName);
 }
