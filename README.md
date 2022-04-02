@@ -1,6 +1,6 @@
 # Example
 
-Example of flutter cross platform app
+An over-engineered flutter cross-platform application template for large apps.
 
 ## Getting Started
 
