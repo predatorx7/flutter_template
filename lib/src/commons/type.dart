@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AppTextTheme {
+class AppTypography {
+  static Typography typography = Typography(
+    black: AppTypography.textTheme.apply(
+      bodyColor: Colors.black,
+      displayColor: Colors.black,
+      decorationColor: Colors.black,
+    ),
+    white: AppTypography.textTheme.apply(
+      bodyColor: Colors.white,
+      displayColor: Colors.white,
+      decorationColor: Colors.white,
+    ),
+  );
+
   static TextTheme textTheme = TextTheme(
     headline1: GoogleFonts.nunito(
       fontSize: 101,

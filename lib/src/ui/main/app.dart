@@ -19,9 +19,11 @@ class MainApp extends ConsumerWidget {
       routerDelegate: _router.routerDelegate,
       title: settings.appName,
       theme: settings.theme,
-      darkTheme: settings.theme,
+      darkTheme: settings.darkTheme ?? settings.theme,
+      themeMode: settings.darkTheme != null && settings.theme != null
+          ? ThemeMode.system
+          : (settings.darkTheme != null ? ThemeMode.dark : ThemeMode.light),
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.light,
       localizationsDelegates: const [
         ...AppLocalizations.localizationsDelegates,
       ],

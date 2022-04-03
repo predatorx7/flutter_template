@@ -9,7 +9,7 @@ import 'theme.dart';
 class SettingsFor {
   static const production = SettingsIdentifier('production');
   static const staging = SettingsIdentifier('staging');
-  static const development = SettingsIdentifier('development');
+  static const development = SettingsIdentifier('devel');
 }
 
 class AppDependency with DependencyObject {
@@ -28,7 +28,8 @@ final mainAppSettings = AppSettings<AppData, DependencyObject>(
       return resolveAppDependencies(input.context, input.ref);
     }
   },
-  theme: AppTheme.regular,
+  theme: AppTheme.light,
+  darkTheme: AppTheme.dark,
   flavorName: SettingsFor.production.id,
   identifier: SettingsFor.production,
 );
